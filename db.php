@@ -1,13 +1,12 @@
 <?php
-// Get DATABASE_URL from Railway environment variables (if using ENV)
-$database_url = getenv("DATABASE_URL");
+// Get MySQL URL from Railway environment variables
+$database_url = getenv("MYSQL_URL");
 
-// If DATABASE_URL is not set via ENV, use the hardcoded URL
 if (!$database_url) {
-    $database_url = "mysql://root:OKLKIrlLyndBiMDCuRsYNEATVXmgoWTb@mysql.railway.internal:3306/railway";
+    die("DATABASE_URL is not set in environment variables.");
 }
 
-// Parse the DATABASE_URL to extract connection details
+// Parse MySQL URL
 $db = parse_url($database_url);
 $host = $db["host"];
 $user = $db["user"];
@@ -23,6 +22,6 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-// Uncomment this line to verify connection during testing
+// Uncomment for testing
 // echo "Connected to Railway MySQL successfully!";
 ?>
