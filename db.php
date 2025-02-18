@@ -1,14 +1,28 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db_name = "chat_app";
+// Get DATABASE_URL from Railway environment variables (if using ENV)
+$database_url = getenv("DATABASE_URL");
 
-$conn = new mysqli($host, $user, $pass, $db_name);
-if($conn->connect_error){
-    die("Connection failed: . $conn->connect_error");
+// If DATABASE_URL is not set via ENV, use the hardcoded URL
+if (!$database_url) {
+    $database_url = "mysql://root:OKLKIrlLyndBiMDCuRsYNEATVXmgoWTb@mysql.railway.internal:3306/railway";
 }
-else{
-    // echo "Connection Done";
+
+// Parse the DATABASE_URL to extract connection details
+$db = parse_url($database_url);
+$host = $db["host"];
+$user = $db["user"];
+$pass = $db["pass"];
+$dbname = ltrim($db["path"], "/");
+$port = isset($db["port"]) ? $db["port"] : 3306; // Default MySQL port
+
+// Create MySQL connection
+$conn = new mysqli($host, $user, $pass, $dbname, $port);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
 }
+
+// Uncomment this line to verify connection during testing
+// echo "Connected to Railway MySQL successfully!";
 ?>
