@@ -1,14 +1,11 @@
-<?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db_name = "chat_app";
+$host = getenv('MYSQLHOST');
+$user = getenv('MYSQLUSER');
+$pass = getenv('MYSQLPASSWORD');
+$db_name = getenv('MYSQLDATABASE');
+$port = getenv('MYSQLPORT') ?: 3306; // Default MySQL port
 
-$conn = new mysqli($host, $user, $pass, $db_name);
-if($conn->connect_error){
-    die("Connection failed: . $conn->connect_error");
+$conn = new mysqli($host, $user, $pass, $db_name, $port);
+
+if ($conn->connect_error) {
+    die("❌ Connection failed: " . $conn->connect_error);
 }
-else{
-    // echo "Connection Done";
-}
-?>

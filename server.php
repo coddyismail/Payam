@@ -1,10 +1,6 @@
-<?php
-error_reporting(E_ALL);
-set_time_limit(0);
-ob_implicit_flush();
-
 $host = "0.0.0.0";
-$port = 8080;
+$port = getenv('PORT') ?: 8080; // Railway assigns a random port
+
 $clients = [];
 
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -14,6 +10,7 @@ socket_listen($socket);
 
 echo "WebSocket server running on port $port...\n";
 
+// Main WebSocket loop
 while (true) {
     $changed = $clients;
     $changed[] = $socket;
@@ -24,7 +21,6 @@ while (true) {
         $clients[] = $newClient;
         $request = socket_read($newClient, 5000);
         
-        // Perform WebSocket handshake
         if (preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $request, $matches)) {
             $key = trim($matches[1]);
             $acceptKey = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
@@ -59,6 +55,7 @@ while (true) {
     }
 }
 
+// WebSocket message encoding/decoding functions
 function mask($text) {
     $b1 = 0x81;
     $length = strlen($text);
